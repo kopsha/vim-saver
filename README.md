@@ -14,17 +14,7 @@ saved automatically as you work, minimizing the risk of data loss.
 ### Using [packer.nvim](https://github.com/wbthomason/packer.nvim):
 
 ```lua
-use {
-    'kopsha/vim-saver',
-    tag = '1.*',  -- to avoid annoying unreleased updates
-    config = function()
-        require 'vim-saver'.setup({
-            hold_for_ms = 1250,  -- adjust delay as desired
-            -- add or remove excluded file types as needed
-            excluded_filetypes = { netrw = true, startify = true, ... },
-        })
-    end
-}
+use { 'kopsha/vim-saver', tag = '1.*' }
 ```
 
 
