@@ -4,16 +4,15 @@
 " Maintainer: Florin Ciurcanu <https://github.com/kopsha>
 " =============================================================================
 
-" Prevent the script from being loaded more than once
 if exists("g:vimsaver_is_loaded")
     finish
 endif
 let g:vimsaver_is_loaded = 1
 
-" Autogroup for managing auto-save related autocmds
-augroup AutoSaveGroup
+command! SaverToggle lua require "vim-saver".toggle()
+
+augroup LuaEvents
     autocmd!
-    " Trigger auto-save when leaving Insert mode or when text is changed
-    autocmd InsertLeave,TextChanged * :lua require "vim-saver".on_save_event()
+    autocmd BufLeave * lua require "vim-saver".on_buf_leave()
 augroup END
 
