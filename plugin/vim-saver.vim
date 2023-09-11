@@ -13,6 +13,6 @@ command! SaverToggle lua require "vim-saver".toggle()
 
 augroup LuaEvents
     autocmd!
-    autocmd BufLeave * lua require "vim-saver".on_buf_leave()
+    autocmd FocusLost, BufLeave * lua require "vim-saver".on_buf_leave()
 augroup END
 
