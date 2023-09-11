@@ -1,26 +1,17 @@
-# Vim Saver plugin
+# Vim Saver
 
-**Yet another auto-save plugin for Neovim.**
-Saves your work automatically after a short delay or as soon as you exit insert
-mode, making sure you never lose unsaved changes.
-
-Maintained by [Florin Ciurcanu](https://github.com/kopsha).
+> Yet another auto-save plugin, a true time saver.
 
 
-## Features
-- **Delay Auto-Save**: Adds a delay before auto-saving, reducing the number of
-  save operations if you type quickly.
-- **Excluded File Types**: Some file types, like `netrw` or `startify`, don't
-  need auto-saving. Vim Saver knows this and skips auto-saving for these types.
-- **Dimmed notification message**: after a while you may be annoyed by the
-  autosave notification, so it is dimmed. Maybe it worths to be configurable.
-- **Customizable**: Want to adjust the delay or exclude additional file types?
-  Vim Saver's got you covered!
+## Introduction
+
+**Vim Saver** is an auto-save plugin for Vim. It ensures that your buffers are
+saved automatically as you work, minimizing the risk of data loss.
 
 
 ## Installation
 
-Using [packer.nvim](https://github.com/wbthomason/packer.nvim):
+### Using [packer.nvim](https://github.com/wbthomason/packer.nvim):
 
 ```lua
 use {
@@ -37,47 +28,39 @@ use {
 ```
 
 
-## Usage
+## Commands
 
-Once installed, Vim Saver will automatically save any changes you make:
+Toggles the auto-save functionality on and off.
 
-After leaving insert mode.
-Upon any text changes, but with the delay you've specified.
-
+```vim
+:SaverToggle
+```
 
 ## Configuration
 
-You can customize Vim Saver by passing a table to the setup function:
+By default, Vim Saver avoids certain file types to ensure system and plugin
+buffers aren't unnecessarily saved. Customize the list of excluded filetypes
+using the provided Lua API.
 
 
-### `hold_for_ms`
+## Lua API
 
-Determines the delay (in milliseconds) before auto-saving after a text change.
-- Type: number
-- Default: 1250
+The Lua API offers the classical configuration options:
 
-### `excluded_filetypes`
+- `setup(params)`: Changes the default settings.
+- `toggle()`: Programmatically toggle Vim Saver status.
 
-A list of file types for which auto-saving should be skipped.
-- Type: table
-- Default:
-  ```
+
+For example, to exclude autosaving for `markdown` and `txt` files:
+
+```lua
+lua require'vim-saver'.setup({
     excluded_filetypes = {
-        netrw           = true,
-        startify        = true,
-        NvimTree        = true,
-        fugitive        = true,
-        fugitiveblame   = true,
-        gitcommit       = true,
-        qf              = true,
-        help            = true,
-        undotree        = true,
-        vista           = true,
-        packer          = true,
-        TelescopePrompt = true,
+        markdown = true,
+        txt      = true
     }
-  ```
-
+})
+```
 
 ## Contributing
 

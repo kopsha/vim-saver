@@ -1,71 +1,69 @@
-*vim-saver.txt*    For Vim version 8.0 and later. Last change: 2023 Sep 10
+*vim-saver.txt* For Vim version 8.0 and above.    Last change: 2023 Sep 11
 
-                   PLUGIN: vim-saver
-                   MAINTAINER: Florin Ciurcanu <https://github.com/kopsha>
+                     VIM SAVER
+             Yet another auto-save plugin,
+                   a true time saver.
 
-==============================================================================
-1. Contents                                           *vim-saver-contents*
-
-    1. Contents..............: |vim-saver-contents|
-    2. Introduction..........: |vim-saver-intro|
-    3. Commands..............: |vim-saver-commands|
-    4. Configuration.........: |vim-saver-config|
-    5. License...............: |vim-saver-license|
+Author: Florin Ciurcanu <https://github.com/kopsha>
 
 ==============================================================================
-2. Introduction                                       *vim-saver-intro*
+CONTENTS                                                       *vim-saver-contents*
 
-    vim-saver is an autosave plugin for Vim and Neovim, designed to 
-    automatically save your changes after a specified interval, ensuring you 
-    don't lose your progress. It also provides the ability to exclude certain 
-    file types from being autosaved, allowing for greater flexibility.
-
-==============================================================================
-3. Commands                                           *vim-saver-commands*
-
-    The plugin primarily operates automatically, saving changes in the
-    background. Therefore, no specific commands are provided for users to 
-    interact with the plugin directly.
+    1. Introduction          |vim-saver-introduction|
+    2. Commands              |vim-saver-commands|
+    3. Configuration         |vim-saver-configuration|
+    4. Lua API               |vim-saver-lua-api|
 
 ==============================================================================
-4. Configuration                                      *vim-saver-config*
+INTRODUCTION                                                 *vim-saver-introduction*
 
-    The plugin comes with a set of default configurations that the user can 
-    override as per their requirements:
-
-    - `hold_for_ms`: The delay before autosaving, in milliseconds.
-      Default is 1250ms.
-
-    - `excluded_filetypes`: A list of filetypes that the plugin should
-      exclude from autosaving. Default exclusions include filetypes like 
-      netrw, startify, NvimTree, among others.
-
-    To change the configuration, you can call the `setup` function from your 
-    `.vimrc` or `init.vim`:
-
-    >
-        lua << EOF
-        require "vim-saver".setup({
-            hold_for_ms = 1500,
-            excluded_filetypes = {
-                netrw = true,
-                startify = true,
-                markdown = true,
-            }
-        })
-        EOF
-    <
-
-    In the above example, the delay is set to 1500ms and markdown files are 
-    added to the exclusion list.
+Vim Saver is an auto-save plugin that automatically saves your buffers as you
+work, ensuring that you don't lose any progress. It provides a Lua API for
+more advanced configurations.
 
 ==============================================================================
-5. License                                            *vim-saver-license*
+COMMANDS                                                     *vim-saver-commands*
 
-    vim-saver is released under the GNU General Public License v3.0. For 
-    full details, refer to the LICENSE file included with the plugin or 
-    check the GPL3.0 official page.
+SaverToggle~
+    Toggles the auto-save functionality. When activated, it will save the
+    buffer on leaving. When deactivated, auto-saving functionality is paused.
 
 ==============================================================================
-vim:tw=78:ts=8:noet:ft=help:norl:
+CONFIGURATION                                                *vim-saver-configuration*
 
+By default, Vim Saver ignores certain file types, ensuring that system and
+plugin buffers aren't unnecessarily saved. The default configuration excludes:
+
+    netrw, startify, NvimTree, fugitive, fugitiveblame, gitcommit, qf, help,
+    undotree, vista, packer, TelescopePrompt
+
+You can extend or replace this configuration using the provided Lua API.
+
+==============================================================================
+LUA API                                                       *vim-saver-lua-api*
+
+The Lua API offers the following functions:
+
+setup(params)~
+    Extends the default configuration with the provided parameters.
+
+toggle()~
+    Toggles the Vim Saver activation status.
+
+on_buf_leave()~
+    Triggers the auto-save on buffer leave. This is bound to the BufLeave event.
+
+Example:
+>
+    lua require'vim-saver'.setup({
+        excluded_filetypes = {
+            markdown = true,
+            txt      = true
+        }
+    })
+<
+
+This would extend the list of excluded filetypes to also ignore markdown and txt
+files.
+
+==============================================================================
