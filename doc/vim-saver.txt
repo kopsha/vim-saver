@@ -1,69 +1,57 @@
-*vim-saver.txt* For Vim version 8.0 and above.    Last change: 2023 Sep 11
+*vim-saver.txt* For Vim version 8.0 and later.            Last change: 2023 Sep
+                             Plugin: vim-saver
+                         Maintainer: Florin Ciurcanu <https://github.com/kopsha>
 
-                     VIM SAVER
-             Yet another auto-save plugin,
-                   a true time saver.
+INTRODUCTION                                           *vim-saver-introduction*
 
-Author: Florin Ciurcanu <https://github.com/kopsha>
+VimSaver isn't your everyday auto-save plugin. It's the chill buddy that
+casually ensures your work is saved. Imagine writing your magnum opus in Vim,
+getting lost in the flow, and never having to worry about the mundane task of
+hitting `:w`. That's VimSaver for you!
 
-==============================================================================
-CONTENTS                                                       *vim-saver-contents*
+CONTENTS                                                   *vim-saver-contents*
 
-    1. Introduction          |vim-saver-introduction|
-    2. Commands              |vim-saver-commands|
-    3. Configuration         |vim-saver-configuration|
-    4. Lua API               |vim-saver-lua-api|
+  1. Usage ..................: |vim-saver-usage|
+  2. Configuration ..........: |vim-saver-configuration|
+  3. Commands ...............: |vim-saver-commands|
 
-==============================================================================
-INTRODUCTION                                                 *vim-saver-introduction*
+USAGE                                                        *vim-saver-usage*
 
-Vim Saver is an auto-save plugin that automatically saves your buffers as you
-work, ensuring that you don't lose any progress. It provides a Lua API for
-more advanced configurations.
+With VimSaver, there's minimal setup. Just install it and let it work its magic.
+However, you can always take control when you feel like it:
 
-==============================================================================
-COMMANDS                                                     *vim-saver-commands*
+- Toggle VimSaver on/off with the `:SaverToggle` command.
 
-SaverToggle~
-    Toggles the auto-save functionality. When activated, it will save the
-    buffer on leaving. When deactivated, auto-saving functionality is paused.
+CONFIGURATION                                         *vim-saver-configuration*
 
-==============================================================================
-CONFIGURATION                                                *vim-saver-configuration*
+While VimSaver is low-key, you can still customize it to vibe with your flow:
 
-By default, Vim Saver ignores certain file types, ensuring that system and
-plugin buffers aren't unnecessarily saved. The default configuration excludes:
+- *active* (default: true): 
+  Whether VimSaver is on the lookout from the get-go. Set to `false` if you
+  want a calm start.
 
-    netrw, startify, NvimTree, fugitive, fugitiveblame, gitcommit, qf, help,
-    undotree, vista, packer, TelescopePrompt
+- *debounce_ms* (default: 2584): 
+  How patient is VimSaver? This is the delay (in ms) before it saves after 
+  detecting changes. Adjust as you see fit.
 
-You can extend or replace this configuration using the provided Lua API.
-
-==============================================================================
-LUA API                                                       *vim-saver-lua-api*
-
-The Lua API offers the following functions:
-
-setup(params)~
-    Extends the default configuration with the provided parameters.
-
-toggle()~
-    Toggles the Vim Saver activation status.
-
-on_buf_leave()~
-    Triggers the auto-save on buffer leave. This is bound to the BufLeave event.
-
-Example:
+Example setup in Lua:
 >
-    lua require'vim-saver'.setup({
-        excluded_filetypes = {
-            markdown = true,
-            txt      = true
-        }
+    require("vim-saver").setup({
+        active = true,
+        debounce_ms = 3000,
     })
-<
 
-This would extend the list of excluded filetypes to also ignore markdown and txt
-files.
+COMMANDS                                                   *vim-saver-commands*
+
+- `:SaverToggle`: 
+  Takes the wheel or hands it back to you. Toggle VimSaver on/off with this.
+
+TROUBLESHOOTING                                     *vim-saver-troubleshooting*
+
+Experiencing issues? First, ensure you've got the latest version. If you're
+still facing problems or have suggestions, hit up the GitHub repo:
+https://github.com/kopsha/vim-saver/issues
 
 ==============================================================================
+vim:tw=80:ts=4:ft=help:norl:
+

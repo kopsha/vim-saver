@@ -1,45 +1,104 @@
 -- Default configuration
 local config = {
-    excluded_filetypes = {
-        netrw           = true,
-        startify        = true,
-        NvimTree        = true,
-        fugitive        = true,
-        fugitiveblame   = true,
-        gitcommit       = true,
-        qf              = true,
-        help            = true,
-        undotree        = true,
-        vista           = true,
-        packer          = true,
-        TelescopePrompt = true,
-    },
-    inactive = false,
+    active = true,
+    debounce_ms = 2584,
 }
 
-local function save_buffer(bufname)
+local api = vim.api
+
+-- private section
+local timer = vim.loop.new_timer()
+local is_counting = false
+local augroup_id = nil
+
+local function on_edit_events()
+    if is_counting then
+        timer:stop()
+    else
+        is_counting = true
+    end
+
+    timer:start(config.debounce_ms, 0, vim.schedule_wrap(function()
+        vim.cmd("update")
+        is_counting = false
+    end))
+end
+
+local function on_leave_events()
+    if is_counting then
+        timer:stop()
+        is_counting = false
+    end
     vim.cmd("update")
 end
 
-local M = {} -- exported module object
-
-M.setup = function(params)
-    config = vim.tbl_deep_extend("keep", params, config)
+local function subscribe()
+    augroup_id = api.nvim_create_augroup("SaverEvents", { clear = true })
+    -- create all autocmds
+    api.nvim_create_autocmd(
+        {
+            "FocusLost",
+            "BufLeave",
+        },
+        {
+            pattern = "*",
+            callback = function(event)
+                if event.file ~= "" and not vim.bo.readonly and vim.bo.modified then
+                    on_leave_events()
+                end
+            end
+        }
+    )
+    api.nvim_create_autocmd(
+        {
+            "InsertLeave",
+            "TextChanged"
+        },
+        {
+            pattern = "*",
+            callback = function(event)
+                if event.file ~= "" and not vim.bo.readonly and vim.bo.modified then
+                    on_edit_events()
+                end
+            end
+        }
+    )
 end
+
+local function unsubscribe()
+    -- first, stop anything in progress
+    if is_counting then
+        timer:stop()
+        is_counting = false
+    end
+    -- second, clear all the autocmds
+    if augroup_id ~= nil then
+        api.nvim_del_augroup_by_id(augroup_id)
+        augroup_id = nil
+    end
+end
+
+-- public section
+local M = {}
 
 M.toggle = function()
-    config.inactive = not config.inactive
-    print("Vim Saver was", not config.inactive and "activated." or "deactivated.")
-end
+    config.active = not config.active
 
-M.on_buf_leave = function()
-    bufname = vim.fn.bufname("%") or ""
-
-    if config.inactive or not vim.bo.modified or bufname == "" or config.excluded_filetypes[vim.bo.filetype] then
-        return
+    if config.active then
+        subscribe()
+    else
+        unsubscribe()
     end
 
-    save_buffer(bufname)
+    print("VimSaver was", config.active and "activated." or "deactivated.")
+end
+
+M.setup = function(user_options)
+    config = vim.tbl_deep_extend("keep", user_options, config)
+    api.nvim_create_user_command("SaverToggle", M.toggle, { force = true })
+    if config.active then
+        subscribe()
+    end
 end
 
 return M

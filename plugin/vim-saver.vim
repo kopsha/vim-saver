@@ -1,19 +1,13 @@
 " =============================================================================
-" Vim Saver
+" VimSaver
 " Description: Yet another auto-save plugin, a true time saver.
 " Maintainer: Florin Ciurcanu <https://github.com/kopsha>
 " =============================================================================
 
-if exists("g:vimsaver_is_loaded")
+if exists("g:vimsaver_was_loaded")
     finish
 endif
-let g:vimsaver_is_loaded = 1
 
-command! SaverToggle lua require "vim-saver".toggle()
-
-augroup SaverEvents
-    autocmd!
-    autocmd BufLeave * lua require "vim-saver".on_buf_leave()
-    autocmd FocusLost * lua require "vim-saver".on_buf_leave()
-augroup END
+lua require("vim-saver").setup({})
+let g:vimsaver_was_loaded = 1
 
