@@ -67,8 +67,6 @@ local function subscribe()
         {
             "TextChanged",
             "TextChangedI",
-            "TechChangedP",
-            "TextChangedT",
         },
         {
             pattern = "*",
