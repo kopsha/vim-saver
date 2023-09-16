@@ -1,7 +1,8 @@
 -- Default configuration
 local config = {
     active = true,
-    debounce_ms = 2584,
+    short_debounce_ms = 987,
+    long_debounce_ms = 4181,
 }
 
 local api = vim.api
@@ -11,14 +12,27 @@ local timer = vim.loop.new_timer()
 local is_counting = false
 local augroup_id = nil
 
-local function on_edit_events()
+local function on_changed_events()
     if is_counting then
         timer:stop()
     else
         is_counting = true
     end
 
-    timer:start(config.debounce_ms, 0, vim.schedule_wrap(function()
+    timer:start(config.long_debounce_ms, 0, vim.schedule_wrap(function()
+        vim.cmd("update")
+        is_counting = false
+    end))
+end
+
+local function on_change_leave_events()
+    if is_counting then
+        timer:stop()
+    else
+        is_counting = true
+    end
+
+    timer:start(config.short_debounce_ms, 0, vim.schedule_wrap(function()
         vim.cmd("update")
         is_counting = false
     end))
@@ -51,14 +65,29 @@ local function subscribe()
     )
     api.nvim_create_autocmd(
         {
-            "InsertLeave",
-            "TextChanged"
+            "TextChanged",
+            "TextChangedI",
+            "TechChangedP",
+            "TextChangedT",
         },
         {
             pattern = "*",
             callback = function(event)
                 if event.file ~= "" and not vim.bo.readonly and vim.bo.modified then
-                    on_edit_events()
+                    on_changed_events()
+                end
+            end
+        }
+    )
+    api.nvim_create_autocmd(
+        {
+            "InsertLeave",
+        },
+        {
+            pattern = "*",
+            callback = function(event)
+                if event.file ~= "" and not vim.bo.readonly and vim.bo.modified then
+                    on_change_leave_events()
                 end
             end
         }
