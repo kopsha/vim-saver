@@ -66,7 +66,6 @@ local function subscribe()
     api.nvim_create_autocmd(
         {
             "TextChanged",
-            "TextChangedI",
         },
         {
             pattern = "*",
