@@ -43,7 +43,13 @@ local function on_leave_events()
         timer:stop()
         is_counting = false
     end
-    vim.cmd("update")
+    -- Check the buffer type before running the update command
+    local buftype = vim.api.nvim_buf_get_option(0, 'buftype')
+    if buftype == '' then
+        vim.cmd("update")
+    else
+        print("Skipping update for buffer type: " .. buftype)
+    end
 end
 
 local function subscribe()
